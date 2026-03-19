@@ -154,31 +154,6 @@ const App = () => {
               </div>
             </div>
 
-            {/* <div className="control">
-              Barcode type:&nbsp;
-              <label className="radio">
-                <input
-                  type="radio"
-                  name="barcodeType"
-                  value="qrcode"
-                  checked={barcodeType === "qrcode"}
-                  onChange={handleRadioChange}
-                />
-                &nbsp;QR Code
-              </label>
-              <label className="radio">
-                <input
-                  type="radio"
-                  name="barcodeType"
-                  value="code128"
-                  checked={barcodeType === "code128"}
-                  onChange={handleRadioChange}
-                  disabled
-                />
-                &nbsp;Code128
-              </label>
-            </div> */}
-
             <div>
               Title (optional):
               <input
@@ -218,7 +193,6 @@ const App = () => {
       )}
 
       <footer className="screen-only">
-        &copy; <a href="https://gock.net/">Andy Gock</a> | source @
         <a href="https://github.com/andygock/table-barcode-generator/">
           GitHub
         </a>
