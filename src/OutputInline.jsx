@@ -11,19 +11,22 @@ const OutputInline = ({
   const [barcodes, setBarcodes] = React.useState([]);
 
   // generate qr code for each row's last column, returns array of Promise resolving to an array of data URLs
-  const createQRCodes = async (barcodeContent) => {
-    // https://github.com/soldair/node-qrcode
-    // https://github.com/soldair/node-qrcode#qr-code-options
-    const qrcodes = await Promise.all(
-      barcodeContent.map((data) =>
-        QRCode.toDataURL(data, {
-          width: barcodeWidth,
-          margin: 0,
-        })
-      )
-    );
-    return qrcodes;
-  };
+  const createQRCodes = React.useCallback(
+    async (barcodeContent) => {
+      // https://github.com/soldair/node-qrcode
+      // https://github.com/soldair/node-qrcode#qr-code-options
+      const qrcodes = await Promise.all(
+        barcodeContent.map((data) =>
+          QRCode.toDataURL(data, {
+            width: barcodeWidth,
+            margin: 0,
+          }),
+        ),
+      );
+      return qrcodes;
+    },
+    [barcodeWidth],
+  );
 
   React.useEffect(() => {
     const createBarcodes = async () => {
@@ -40,7 +43,7 @@ const OutputInline = ({
     };
 
     createBarcodes();
-  }, [rows, barcodeMargin, barcodeWidth]);
+  }, [rows, barcodeType, createQRCodes]);
 
   return (
     <div className="output-inline">

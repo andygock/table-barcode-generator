@@ -9,22 +9,25 @@ const InputArea = ({ onUpdate, delimiter = "\t", onError = () => {} }) => {
   const [value, setValue] = React.useState(defaultContent);
   const ref = React.useRef();
 
-  const parseInput = async (data) => {
-    Papa.parse(data, {
-      delimiter: delimiter,
-      skipEmptyLines: true,
-      comments: "#",
-      error: (error) => onError(error.message),
-      complete: (results) => {
-        onError(null);
-        onUpdate(results.data);
-      },
-    });
-  };
+  const parseInput = React.useCallback(
+    async (data) => {
+      Papa.parse(data, {
+        delimiter: delimiter,
+        skipEmptyLines: true,
+        comments: "#",
+        error: (error) => onError(error.message),
+        complete: (results) => {
+          onError(null);
+          onUpdate(results.data);
+        },
+      });
+    },
+    [delimiter, onError, onUpdate],
+  );
 
   React.useEffect(() => {
     parseInput(value);
-  }, [value, delimiter]);
+  }, [value, parseInput]);
 
   React.useEffect(() => {
     ref.current.focus();
