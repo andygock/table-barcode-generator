@@ -1,0 +1,27 @@
+:root {
+  /* Shared values mirror the small framework surface this app used before. */
+  --app-color-background: #ffffff;
+  --app-color-text: #4a4a4a;
+  --app-color-heading: #363636;
+  --app-color-border: #dbdbdb;
+  --app-color-border-light: #eeeeee;
+  --app-color-control-focus: #485fc7;
+  --app-color-danger-background: #feecf0;
+  --app-color-danger-text: #cc0f35;
+  --app-color-white: #ffffff;
+
+  --app-font-family:
+    BlinkMacSystemFont, -apple-system, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
+  --app-font-family-monospace:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+
+  --app-size-radius: 4px;
+  --app-size-control-height: 2.5em;
+  --app-size-column-gap: 0.75rem;
+  --app-size-container-desktop: 960px;
+  --app-size-container-widescreen: 1152px;
+  --app-size-container-fullhd: 1344px;
+}

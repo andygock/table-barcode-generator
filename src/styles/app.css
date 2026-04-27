@@ -1,4 +1,10 @@
-@import "../node_modules/bulma/css/bulma.css";
+@import "./tokens.css";
+@import "./framework-compat.css";
+
+.table-custom {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
 
 .table-custom td,
 .table-custom th {
@@ -6,23 +12,24 @@
 }
 
 td.data {
-  font-family: monospace;
-  word-wrap: break-word;
+  font-family: var(--app-font-family-monospace);
   overflow-wrap: anywhere;
+  word-wrap: break-word;
 }
 
 @media screen {
   /* barcode needs white background, otherwise not scannable if browser in dark mode */
   td.barcode {
-    background-color: white;
+    background-color: var(--app-color-white);
   }
 }
 
 @media print {
   body {
+    background-color: var(--app-color-white);
     margin: 1rem;
-    background-color: white;
   }
+
   .screen-only {
     display: none !important;
   }
@@ -42,15 +49,15 @@ footer {
 
 .output-inline {
   display: grid;
+  grid-gap: 0;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   grid-template-rows: auto;
-  grid-gap: 0;
 }
 
 .output-inline .cell {
-  border: solid 1px #eee;
+  background-color: var(--app-color-white);
+  border: solid 1px var(--app-color-border-light);
   padding: 10px;
-  background-color: white;
 }
 
 .output-inline .barcode {
@@ -58,9 +65,9 @@ footer {
 }
 
 .output-inline .text {
-  text-align: center;
+  font-family: var(--app-font-family-monospace);
   font-size: small;
-  word-wrap: break-word;
   overflow-wrap: anywhere;
-  font-family: monospace;
+  text-align: center;
+  word-wrap: break-word;
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import InputArea from "./InputArea";
 import OutputTable from "./OutputTable";
-import "./style.css";
+import "./styles/app.css";
 import OutputInline from "./OutputInline";
 import { sanitizeIntegerInput } from "./inputUtils";
 
