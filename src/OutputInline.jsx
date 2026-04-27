@@ -1,5 +1,6 @@
 import React from "react";
 import QRCode from "qrcode";
+import { getBarcodeContents } from "./barcodeRows";
 
 const OutputInline = ({
   records: rows,
@@ -30,8 +31,8 @@ const OutputInline = ({
 
   React.useEffect(() => {
     const createBarcodes = async () => {
-      // get array of strings, to convert to barcodes
-      const barcodeContent = rows.map((row) => row[row.length - 1]);
+      // Only generate barcodes for rows that will actually be rendered.
+      const barcodeContent = getBarcodeContents(rows, hasHeaderRow);
 
       if (barcodeType === "qrcode") {
         // create array of base64 encodings of barcodes
@@ -43,12 +44,14 @@ const OutputInline = ({
     };
 
     createBarcodes();
-  }, [rows, barcodeType, createQRCodes]);
+  }, [rows, hasHeaderRow, barcodeType, createQRCodes]);
 
   return (
     <div className="output-inline">
       {rows.map((row, rowIndex) => {
         if (hasHeaderRow && rowIndex === 0) return null;
+        const barcodeIndex = hasHeaderRow ? rowIndex - 1 : rowIndex;
+
         return (
           <div
             className="cell"
@@ -57,7 +60,7 @@ const OutputInline = ({
           >
             {/* barcode displayed always the last column of each row */}
             <div className="barcode">
-              <img src={barcodes[rowIndex]} />
+              <img src={barcodes[barcodeIndex]} />
             </div>
 
             {/* display each column of the row in its own div */}

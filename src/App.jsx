@@ -3,6 +3,7 @@ import InputArea from "./InputArea";
 import OutputTable from "./OutputTable";
 import "./style.css";
 import OutputInline from "./OutputInline";
+import { sanitizeIntegerInput } from "./inputUtils";
 
 const App = () => {
   const [records, setRecords] = React.useState([]);
@@ -128,9 +129,12 @@ const App = () => {
                       type="number"
                       placeholder="Barcode width (px)"
                       value={barcodeWidth}
-                      onChange={(e) =>
-                        setBarcodeWidth(parseInt(e.target.value), 10)
-                      }
+                      onChange={(e) => {
+                        // Keep the state numeric so barcode generation always receives a valid width.
+                        setBarcodeWidth(
+                          sanitizeIntegerInput(e.target.value, 100, 1),
+                        );
+                      }}
                     />
                   </div>
                 </div>
@@ -145,9 +149,12 @@ const App = () => {
                       type="number"
                       placeholder="Barcode margin (px)"
                       value={barcodeMargin}
-                      onChange={(e) =>
-                        setBarcodeMargin(parseInt(e.target.value), 10)
-                      }
+                      onChange={(e) => {
+                        // Keep the state numeric so spacing styles never receive NaN.
+                        setBarcodeMargin(
+                          sanitizeIntegerInput(e.target.value, 15, 0),
+                        );
+                      }}
                     />
                   </div>
                 </div>

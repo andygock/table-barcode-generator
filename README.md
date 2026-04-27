@@ -19,6 +19,8 @@ Install dependencies
 
 Start development server
 
+    pnpm dev
+
     pnpm start
 
 Build for production into `dist/`

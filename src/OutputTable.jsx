@@ -1,5 +1,6 @@
 import React from "react";
 import QRCode from "qrcode";
+import { getBarcodeContents } from "./barcodeRows";
 
 const OutputTable = ({
   records,
@@ -32,8 +33,8 @@ const OutputTable = ({
 
   React.useEffect(() => {
     const createBarcodes = async () => {
-      // get array of strings, to convert to barcodes
-      const barcodeContent = records.map((row) => row[row.length - 1]);
+      // Only generate barcodes for rows that will actually be rendered.
+      const barcodeContent = getBarcodeContents(records, hasHeaderRow);
 
       if (barcodeType === "qrcode") {
         // create array of base64 encodings of barcodes
@@ -45,7 +46,7 @@ const OutputTable = ({
     };
 
     createBarcodes();
-  }, [records, barcodeWidth, barcodeMargin, barcodeType, createQRCodes]);
+  }, [records, hasHeaderRow, barcodeWidth, barcodeMargin, barcodeType, createQRCodes]);
 
   // display nothing if empty rows
   if (records.length === 0) return null;
@@ -65,6 +66,8 @@ const OutputTable = ({
       <tbody>
         {records.map((row, rowIndex) => {
           if (hasHeaderRow && rowIndex === 0) return null;
+          const barcodeIndex = hasHeaderRow ? rowIndex - 1 : rowIndex;
+
           return (
             <tr key={rowIndex}>
               {row.map((column, columnIndex) => (
@@ -79,7 +82,7 @@ const OutputTable = ({
               {
                 <td className="barcode" style={{ padding: barcodeMargin }}>
                   <img
-                    src={barcodes[rowIndex]}
+                    src={barcodes[barcodeIndex]}
                     width={barcodeWidth}
                     height={barcodeWidth}
                   />
