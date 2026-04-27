@@ -5,7 +5,7 @@ for the last column. Output is printer-friendly. Works with
 pasting in from a spreadsheet. Last column and barcode data will
 have whitespace padding trimmed.
 
-[Live web site](https://barcode.gock.net/)
+[Live web site](https://barcode.gock.net/) hosted on Cloudflare Pages.
 
 This was developed using pnpm and the commands below are based on that. You can use standard `npm` commands if you prefer.
 
