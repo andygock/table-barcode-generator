@@ -7,11 +7,9 @@ have whitespace padding trimmed.
 
 [Live web site](https://barcode.gock.net/) hosted on Cloudflare Pages.
 
-This was developed using pnpm and the commands below are based on that. You can use standard `npm` commands if you prefer.
+This was developed using pnpm and the commands below require pnpm. Do not use npm or yarn for project scripts because they can change dependency resolution.
 
-Install [pnpm](https://pnpm.io/)
-
-    npm install -g pnpm
+Install [pnpm](https://pnpm.io/) using the method recommended for your environment.
 
 Install dependencies
 
@@ -29,4 +27,4 @@ Build for production into `dist/`
 
 If required, use the following Netlify build command
 
-    pnpm build || ( npm install pnpm && pnpm build )
+    pnpm build

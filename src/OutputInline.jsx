@@ -1,6 +1,5 @@
 import React from "react";
-import QRCode from "qrcode";
-import { getBarcodeContents } from "./barcodeRows";
+import useQRCodes from "./useQRCodes";
 
 const OutputInline = ({
   records: rows,
@@ -9,42 +8,16 @@ const OutputInline = ({
   barcodeMargin = 0.75,
   hasHeaderRow = false,
 }) => {
-  const [barcodes, setBarcodes] = React.useState([]);
-
-  // generate qr code for each row's last column, returns array of Promise resolving to an array of data URLs
-  const createQRCodes = React.useCallback(
-    async (barcodeContent) => {
-      // https://github.com/soldair/node-qrcode
-      // https://github.com/soldair/node-qrcode#qr-code-options
-      const qrcodes = await Promise.all(
-        barcodeContent.map((data) =>
-          QRCode.toDataURL(data, {
-            width: barcodeWidth,
-            margin: 0,
-          }),
-        ),
-      );
-      return qrcodes;
-    },
-    [barcodeWidth],
+  const { barcodes, barcodeError } = useQRCodes(
+    rows,
+    hasHeaderRow,
+    barcodeType,
+    barcodeWidth,
   );
 
-  React.useEffect(() => {
-    const createBarcodes = async () => {
-      // Only generate barcodes for rows that will actually be rendered.
-      const barcodeContent = getBarcodeContents(rows, hasHeaderRow);
-
-      if (barcodeType === "qrcode") {
-        // create array of base64 encodings of barcodes
-        const qrcodes = await createQRCodes(barcodeContent);
-
-        // update state
-        setBarcodes(qrcodes);
-      }
-    };
-
-    createBarcodes();
-  }, [rows, hasHeaderRow, barcodeType, createQRCodes]);
+  if (barcodeError) {
+    return <div className="notification is-danger">{barcodeError}</div>;
+  }
 
   return (
     <div className="output-inline">
@@ -60,7 +33,7 @@ const OutputInline = ({
           >
             {/* barcode displayed always the last column of each row */}
             <div className="barcode">
-              <img src={barcodes[barcodeIndex]} />
+              <img src={barcodes[barcodeIndex]} alt={`Barcode for row ${rowIndex + 1}`} />
             </div>
 
             {/* display each column of the row in its own div */}

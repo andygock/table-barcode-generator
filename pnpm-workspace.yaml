@@ -1,0 +1,5 @@
+overrides:
+  # Keep React Hooks linting on a patched Babel parser dependency.
+  "@babel/core": ^7.29.1
+  # Keep ESLint's minimatch dependency on the patched brace-expansion release.
+  brace-expansion: ^5.0.7
