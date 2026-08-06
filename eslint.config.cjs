@@ -1,4 +1,4 @@
-// Minimal flat config for ESLint v10
+// Minimal flat config for ESLint v9
 // Purpose: keep configuration simple and explicit for this project.
 module.exports = [
   // Ignore build outputs and deps
