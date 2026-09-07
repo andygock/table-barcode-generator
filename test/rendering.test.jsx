@@ -59,7 +59,7 @@ test("generation hides stale results immediately and recovers from input errors"
   }
 });
 
-test("both layouts wait for images, expose matching dimensions and invoke print only when ready", async () => {
+test("both layouts hide print controls and expose output only when images are ready", async () => {
   const result = {
     rows: [
       { cells: ["Alice", "A-001"], line: 3 },
@@ -69,10 +69,6 @@ test("both layouts wait for images, expose matching dimensions and invoke print 
     barcodes: ["data:image/svg+xml,test1", "data:image/svg+xml,test2"],
   };
   const root = createRoot(container);
-  let prints = 0;
-  window.print = () => {
-    prints++;
-  };
   try {
     for (const outputType of ["table", "inline"]) {
       await act(async () =>
@@ -87,29 +83,39 @@ test("both layouts wait for images, expose matching dimensions and invoke print 
           />,
         ),
       );
-      const button = container.querySelector("button");
       const images = [...container.querySelectorAll("img")];
-      assert.equal(button.disabled, true);
+      assert.equal(container.querySelector("button"), null);
+      assert.doesNotMatch(
+        container.textContent,
+        /ready to print|loading barcode/i,
+      );
       assert.ok(container.querySelector(".print-pending"));
+      assert.ok(
+        container
+          .querySelector(".printable-output")
+          .classList.contains(`printable-output--${outputType}`),
+      );
       assert.ok(
         images.every(
           (img) => img.style.width === "30mm" && img.style.height === "30mm",
         ),
       );
-      if (outputType === "table")
+      if (outputType === "table") {
         assert.equal(container.querySelectorAll("th").length, 3);
+        assert.ok(
+          [...container.querySelectorAll("td.data")].every(
+            (cell) => cell.style.padding === "",
+          ),
+        );
+      }
       await act(async () => images[0].dispatchEvent(new window.Event("load")));
-      assert.equal(button.disabled, true);
+      assert.ok(container.querySelector(".print-pending"));
       await act(async () => images[1].dispatchEvent(new window.Event("load")));
-      assert.equal(button.disabled, false);
       assert.equal(container.querySelector(".print-pending"), null);
-      await act(async () => button.click());
     }
-    assert.equal(prints, 2);
     await act(async () =>
       container.querySelector("img").dispatchEvent(new window.Event("error")),
     );
-    assert.equal(container.querySelector("button").disabled, true);
     assert.ok(container.querySelector(".print-pending"));
   } finally {
     await act(async () => root.unmount());

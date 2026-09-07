@@ -28,11 +28,7 @@ const OutputTable = ({
       {rows.map((row, index) => (
         <tr key={row.line}>
           {row.cells.map((cell, column) => (
-            <td
-              key={column}
-              className="data is-family-monospace"
-              style={{ padding: `${barcodeMargin}mm` }}
-            >
+            <td key={column} className="data is-family-monospace">
               {cell}
             </td>
           ))}

@@ -25,13 +25,7 @@ Start development server
 
     pnpm dev
 
-    pnpm start
-
 Build for production into `dist/`
-
-    pnpm build
-
-If required, use the following Netlify build command
 
     pnpm build
 
@@ -52,11 +46,10 @@ If required, use the following Netlify build command
   Layout spacing is 0–20 mm. Both layouts use SVG images for sharp printing.
   Dense codes require a larger width to maintain the application's minimum
   module size of 0.25 mm. Actual scanner and printer performance still varies.
-- Wait for **Print** to become available. Printing is disabled until every image
-  has loaded. The browser's own print command also hides pending or invalid
-  output. Print at **100% scale** to preserve dimensions; use landscape paper or
-  the grid layout for wide data. Rows/cards are kept together where they fit on
-  a page.
+- The dedicated print button and readiness text are currently hidden. The
+  browser's print command still hides pending or invalid output. Print at **100%
+  scale** to preserve dimensions; use landscape paper or the grid layout for
+  wide data. Rows/cards are kept together where they fit on a page.
 
 Parsing is debounced and QR generation yields between rows. Editing input or
 encoding settings cancels obsolete work and immediately removes stale output.

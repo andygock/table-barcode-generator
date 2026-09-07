@@ -139,9 +139,8 @@ const App = () => {
               </div>
             </div>
             <p id="size-help">
-              Width includes the clear QR margin. Print at 100% scale to
-              preserve dimensions. Dense codes may need a larger width. Spacing
-              controls the surrounding layout.
+              Width includes the clear QR margin. Dense codes may need a larger
+              width. Spacing controls the surrounding layout.
             </p>
             <label htmlFor="output-title">Title (optional)</label>
             <input
@@ -164,7 +163,7 @@ const App = () => {
         >
           {errors.length > 0 ? (
             <div className="notification is-danger">
-              <p>Correct these errors before printing:</p>
+              <p>Correct these errors to continue:</p>
               <ul>
                 {errors.map((error, index) => (
                   <li key={index}>{error}</li>
@@ -187,12 +186,7 @@ const App = () => {
           barcodeWidth={width}
           barcodeMargin={margin}
         />
-      ) : (
-        <p className="print-only">
-          Output is not ready. Resolve errors and wait for barcode generation
-          before printing.
-        </p>
-      )}
+      ) : null}
       <footer className="screen-only">
         <a href="https://github.com/andygock/table-barcode-generator/">
           GitHub

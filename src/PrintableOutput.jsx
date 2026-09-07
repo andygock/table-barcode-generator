@@ -2,8 +2,8 @@ import React from "react";
 import OutputTable from "./OutputTable";
 import OutputInline from "./OutputInline";
 
-// This component mounts only for a fully validated batch. Layout changes remount it
-// so the Print button waits for the images in the currently displayed layout.
+// Track readiness silently so browser printing cannot include partially loaded
+// barcodes. Dedicated print controls are intentionally hidden for now.
 export default function PrintableOutput({
   result,
   title,
@@ -15,41 +15,25 @@ export default function PrintableOutput({
   const [imageError, setImageError] = React.useState(false);
   const ready = !imageError && loaded.size === result.rows.length;
   const Output = outputType === "table" ? OutputTable : OutputInline;
+  const className = [
+    "printable-output",
+    `printable-output--${outputType}`,
+    ready ? null : "print-pending",
+  ]
+    .filter(Boolean)
+    .join(" ");
   return (
-    <>
-      <div className="screen-only print-controls">
-        <button type="button" disabled={!ready} onClick={() => window.print()}>
-          Print
-        </button>
-        <span role="status" aria-live="polite">
-          {imageError
-            ? "A barcode image could not load. Change the input to retry."
-            : ready
-              ? `Ready to print ${result.rows.length} barcode${result.rows.length === 1 ? "" : "s"}.`
-              : "Loading barcode images…"}
-        </span>
-      </div>
-      {!ready && (
-        <p className="print-only">
-          Barcode images are not ready. Wait until Print is available.
-        </p>
-      )}
-      <div
-        className={
-          ready ? "printable-output" : "printable-output print-pending"
+    <div className={className}>
+      {title && <h2 className="title">{title}</h2>}
+      <Output
+        {...result}
+        barcodeWidth={barcodeWidth}
+        barcodeMargin={barcodeMargin}
+        onImageLoad={(index) =>
+          setLoaded((previous) => new Set(previous).add(index))
         }
-      >
-        {title && <h2 className="title">{title}</h2>}
-        <Output
-          {...result}
-          barcodeWidth={barcodeWidth}
-          barcodeMargin={barcodeMargin}
-          onImageLoad={(index) =>
-            setLoaded((previous) => new Set(previous).add(index))
-          }
-          onImageError={() => setImageError(true)}
-        />
-      </div>
-    </>
+        onImageError={() => setImageError(true)}
+      />
+    </div>
   );
 }
