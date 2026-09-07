@@ -1,52 +1,41 @@
 import React from "react";
-import useQRCodes from "./useQRCodes";
+import BarcodeImage from "./BarcodeImage";
 
 const OutputInline = ({
-  records: rows,
-  barcodeType = "qrcode",
-  barcodeWidth = 100,
-  barcodeMargin = 0.75,
-  hasHeaderRow = false,
-}) => {
-  const { barcodes, barcodeError } = useQRCodes(
-    rows,
-    hasHeaderRow,
-    barcodeType,
-    barcodeWidth,
-  );
-
-  if (barcodeError) {
-    return <div className="notification is-danger">{barcodeError}</div>;
-  }
-
-  return (
-    <div className="output-inline">
-      {rows.map((row, rowIndex) => {
-        if (hasHeaderRow && rowIndex === 0) return null;
-        const barcodeIndex = hasHeaderRow ? rowIndex - 1 : rowIndex;
-
-        return (
-          <div
-            className="cell"
-            key={rowIndex}
-            style={{ margin: barcodeMargin }}
-          >
-            {/* barcode displayed always the last column of each row */}
-            <div className="barcode">
-              <img src={barcodes[barcodeIndex]} alt={`Barcode for row ${rowIndex + 1}`} />
-            </div>
-
-            {/* display each column of the row in its own div */}
-            {row.map((col, colIndex) => (
-              <div key={colIndex} className="text is-family-monospace">
-                {col}
-              </div>
-            ))}
+  rows,
+  barcodes,
+  barcodeWidth,
+  barcodeMargin,
+  onImageLoad,
+  onImageError,
+}) => (
+  <div
+    className="output-inline"
+    style={{
+      "--cell-width": `${barcodeWidth + 8}mm`,
+      gap: `${barcodeMargin}mm`,
+    }}
+  >
+    {rows.map((row, index) => (
+      <div className="cell" key={row.line}>
+        {/* The barcode encodes the last column of each row. */}
+        <div className="barcode">
+          <BarcodeImage
+            src={barcodes[index]}
+            line={row.line}
+            width={barcodeWidth}
+            onLoad={() => onImageLoad(index)}
+            onError={onImageError}
+          />
+        </div>
+        {/* Display each column of the row on its own line. */}
+        {row.cells.map((cell, column) => (
+          <div key={column} className="text is-family-monospace">
+            {cell}
           </div>
-        );
-      })}
-    </div>
-  );
-};
-
+        ))}
+      </div>
+    ))}
+  </div>
+);
 export default OutputInline;

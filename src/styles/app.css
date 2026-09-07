@@ -35,7 +35,27 @@ td.data {
   }
 
   td.barcode {
-    min-width: 25%;
+    background-color: var(--app-color-white);
+  }
+
+  /* Keep identifying text and its barcode together wherever the page can fit them. */
+  tr,
+  .output-inline .cell {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+  .print-pending {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .container {
+    width: 100%;
   }
 }
 
@@ -50,14 +70,14 @@ footer {
 .output-inline {
   display: grid;
   grid-gap: 0;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--cell-width, 38mm), 1fr));
   grid-template-rows: auto;
 }
 
 .output-inline .cell {
   background-color: var(--app-color-white);
   border: solid 1px var(--app-color-border-light);
-  padding: 10px;
+  padding: 3mm;
 }
 
 .output-inline .barcode {
@@ -70,4 +90,47 @@ footer {
   overflow-wrap: anywhere;
   text-align: center;
   word-wrap: break-word;
+}
+
+/* QR images must not be shrunk by the global responsive-image rule. */
+.barcode img {
+  max-width: none;
+  display: block;
+  margin: 0 auto;
+}
+.printable-output {
+  overflow-x: auto;
+}
+.print-only {
+  display: none;
+}
+fieldset.control {
+  border: 0;
+  padding: 0;
+  margin: 1rem 0;
+}
+.print-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+button {
+  font: inherit;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+button:focus-visible {
+  outline: 2px solid var(--app-color-control-focus);
+  outline-offset: 2px;
+}
+
+@media print {
+  /* A scroll container can clip pagination in print. */
+  .printable-output {
+    overflow: visible;
+  }
 }

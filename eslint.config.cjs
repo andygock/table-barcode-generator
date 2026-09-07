@@ -1,29 +1,31 @@
-// Minimal flat config for ESLint v9
-// Purpose: keep configuration simple and explicit for this project.
-module.exports = [
-  // Ignore build outputs and deps
-  { ignores: ["dist", "node_modules"] },
+// Enable standard JavaScript and React checks for application, tests and tooling.
+const js = require("@eslint/js");
+const globals = require("globals");
+const react = require("eslint-plugin-react");
+const hooks = require("eslint-plugin-react-hooks");
 
-  // Lint JS/JSX files with basic React rules
+module.exports = [
+  { ignores: ["dist", "node_modules"] },
+  js.configs.recommended,
   {
-    files: ["**/*.{js,jsx}"],
+    files: ["**/*.{js,jsx,cjs}"],
     languageOptions: {
       ecmaVersion: "latest",
-      sourceType: "module",
       parserOptions: { ecmaFeatures: { jsx: true } },
+      globals: { ...globals.node },
     },
-    // Load plugins as objects (flat config requires plugin objects)
-    plugins: {
-      react: require("eslint-plugin-react"),
-      "react-hooks": require("eslint-plugin-react-hooks"),
-      "react-refresh": require("eslint-plugin-react-refresh"),
-    },
-    settings: { react: { version: "18.2" } },
+  },
+  {
+    files: ["src/**/*.{js,jsx}", "test/**/*.jsx"],
+    languageOptions: { globals: { ...globals.browser } },
+    plugins: { react, "react-hooks": hooks },
+    settings: { react: { version: "detect" } },
     rules: {
-      // Keep similar behavior to previous configuration
+      ...react.configs.recommended.rules,
+      // Props are checked through focused integration tests in this JavaScript project.
       "react/prop-types": "off",
       "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/exhaustive-deps": "error",
     },
   },
 ];

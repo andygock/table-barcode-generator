@@ -1,86 +1,50 @@
 import React from "react";
-import QRCode from "qrcode";
-import { getBarcodeContents, getInvalidBarcodeRows } from "./barcodeRows";
+import { parseInput } from "./parseInput.js";
+import { generateBarcodes } from "./generateBarcodes.js";
 
-const formatInvalidRows = (invalidRows) =>
-  invalidRows.length === 1
-    ? `Row ${invalidRows[0]} has no barcode value.`
-    : `Rows ${invalidRows.join(", ")} have no barcode value.`;
-
-const defaultOptions = {
-  errorCorrectionLevel: "M",
-  printScale: 1,
-};
-
-const useQRCodes = (
-  records,
-  hasHeaderRow = false,
-  barcodeType = "qrcode",
-  barcodeWidth = 100,
-  options = defaultOptions,
-) => {
-  const [barcodes, setBarcodes] = React.useState([]);
-  const [barcodeError, setBarcodeError] = React.useState(null);
-
+// Results belong to an exact input snapshot: never combine old images with new text.
+export default function useQRCodes(input, delimiter, hasHeaderRow, width) {
+  const request = React.useMemo(
+    () => ({ input, delimiter, hasHeaderRow, width }),
+    [input, delimiter, hasHeaderRow, width],
+  );
+  const [result, setResult] = React.useState(null);
   React.useEffect(() => {
     let cancelled = false;
-
-    const createBarcodes = async () => {
-      if (barcodeType !== "qrcode") {
-        setBarcodes([]);
-        setBarcodeError(`Unsupported barcode type: ${barcodeType}`);
-        return;
-      }
-
-      // Validate payloads before calling the QR library so bad input is visible and recoverable.
-      const invalidRows = getInvalidBarcodeRows(records, hasHeaderRow);
-
-      if (invalidRows.length > 0) {
-        setBarcodes([]);
-        setBarcodeError(formatInvalidRows(invalidRows));
-        return;
-      }
-
-      const barcodeContent = getBarcodeContents(records, hasHeaderRow);
-
+    // Debounce both parsing and encoding rather than starting full batches while typing.
+    const timer = setTimeout(async () => {
       try {
-        const qrcodes = await Promise.all(
-          barcodeContent.map((data) =>
-            QRCode.toDataURL(data, {
-              width: barcodeWidth * options.printScale,
-              margin: 0,
-              errorCorrectionLevel: options.errorCorrectionLevel,
-            }),
-          ),
-        );
-
-        if (!cancelled) {
-          setBarcodes(qrcodes);
-          setBarcodeError(null);
+        const parsed = parseInput(input, delimiter, hasHeaderRow);
+        const rows = hasHeaderRow ? parsed.rows.slice(1) : parsed.rows;
+        let generated = { barcodes: [], errors: [] };
+        if (!parsed.errors.length && rows.length && width !== null) {
+          generated = await generateBarcodes(rows, width, () => cancelled);
+        }
+        if (!cancelled && generated) {
+          setResult({
+            request,
+            rows,
+            header: hasHeaderRow ? parsed.rows[0] : null,
+            barcodes: generated.barcodes,
+            errors: [...parsed.errors, ...generated.errors],
+          });
         }
       } catch (error) {
-        if (!cancelled) {
-          setBarcodes([]);
-          setBarcodeError(error.message);
-        }
+        if (!cancelled)
+          setResult({
+            request,
+            rows: [],
+            barcodes: [],
+            errors: [error.message],
+          });
       }
-    };
-
-    createBarcodes();
-
+    }, 250);
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
-  }, [
-    records,
-    hasHeaderRow,
-    barcodeType,
-    barcodeWidth,
-    options.errorCorrectionLevel,
-    options.printScale,
-  ]);
-
-  return { barcodes, barcodeError };
-};
-
-export default useQRCodes;
+  }, [request, input, delimiter, hasHeaderRow, width]);
+  return result?.request === request
+    ? { ...result, pending: false }
+    : { rows: [], barcodes: [], errors: [], pending: true };
+}

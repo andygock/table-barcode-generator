@@ -1,0 +1,11 @@
+# Keep the existing seven-day release-age policy reproducible for contributors.
+minimumReleaseAge: 10080
+# Some registry metadata omits publication times. Pin verified mature releases
+# for those transitive packages rather than accepting pnpm's skipped age checks.
+overrides:
+  browserslist: 4.28.8
+  baseline-browser-mapping: 2.11.20
+  electron-to-chromium: 1.5.416
+# tsx uses esbuild for JSX unit tests; allow only its platform-binary setup script.
+allowBuilds:
+  esbuild: true

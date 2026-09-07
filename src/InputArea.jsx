@@ -1,51 +1,28 @@
 import React from "react";
-import Papa from "papaparse";
 
-const defaultContent = `1\tdry flyer rule
+// The example remains editable; changing it immediately invalidates printable output.
+export const defaultContent = `1\tdry flyer rule
 2\tcome rebel wrist
 3\tlion duct cone`;
 
-const InputArea = ({ onUpdate, delimiter = "\t", onError = () => {} }) => {
-  const [value, setValue] = React.useState(defaultContent);
+const InputArea = ({ value, onChange, invalid }) => {
   const ref = React.useRef();
-
-  const parseInput = React.useCallback(
-    async (data) => {
-      Papa.parse(data, {
-        delimiter: delimiter,
-        skipEmptyLines: true,
-        comments: "#",
-        error: (error) => onError(error.message),
-        complete: (results) => {
-          onError(null);
-          onUpdate(results.data);
-        },
-      });
-    },
-    [delimiter, onError, onUpdate],
-  );
-
-  React.useEffect(() => {
-    parseInput(value);
-  }, [value, parseInput]);
-
   React.useEffect(() => {
     ref.current.focus();
   }, []);
-
-  const handleOnFocus = (e) => e.target.select();
-
   return (
-    <textarea
-      ref={ref}
-      className="textarea is-family-monospace"
-      onChange={(e) => {
-        setValue(e.target.value);
-      }}
-      onFocus={handleOnFocus}
-      value={value}
-    />
+    <>
+      <label htmlFor="source-input">TSV or CSV contents</label>
+      <textarea
+        id="source-input"
+        ref={ref}
+        className="textarea is-family-monospace"
+        aria-describedby="input-help output-status"
+        aria-invalid={invalid}
+        onChange={(event) => onChange(event.target.value)}
+        value={value}
+      />
+    </>
   );
 };
-
 export default InputArea;

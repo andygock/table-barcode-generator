@@ -1,8 +1,25 @@
-// Normalize numeric text input so component state always contains a valid number.
-export const sanitizeIntegerInput = (value, fallback, min = 0) => {
-  const parsed = Number.parseInt(value, 10);
+// Shared bounds keep user input, layout and generation in agreement.
+export const limits = {
+  inputCharacters: 250_000,
+  rows: 500,
+  columns: 50,
+  payloadBytes: 2_000,
+  minWidth: 15,
+  maxWidth: 100,
+  maxMargin: 20,
+};
 
-  if (Number.isNaN(parsed)) return fallback;
-
-  return Math.max(min, parsed);
+// Reject incomplete/non-finite values instead of interpreting "1e3" as 1.
+// A null fallback lets the form retain editable text separately from valid settings.
+export const sanitizeIntegerInput = (
+  value,
+  fallback,
+  min = 0,
+  max = Number.MAX_SAFE_INTEGER,
+) => {
+  if (String(value).trim() === "") return fallback;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed >= min && parsed <= max
+    ? parsed
+    : fallback;
 };

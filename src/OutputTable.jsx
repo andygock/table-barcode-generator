@@ -1,76 +1,53 @@
 import React from "react";
-import useQRCodes from "./useQRCodes";
+import BarcodeImage from "./BarcodeImage";
 
+// Source lines remain stable identities even when the header is excluded.
 const OutputTable = ({
-  records,
-  barcodeType = "qrcode",
-  barcodeWidth = 100,
-  barcodeMargin = 10,
-  hasHeaderRow = false,
-  errorCorrectionLevel = "M",
-}) => {
-  const { barcodes, barcodeError } = useQRCodes(
-    records,
-    hasHeaderRow,
-    barcodeType,
-    barcodeWidth,
-    {
-      errorCorrectionLevel,
-      printScale: 4, // Generate larger QR images so print output stays sharp.
-    },
-  );
-
-  // display nothing if empty rows
-  if (records.length === 0) return null;
-
-  if (barcodeError) {
-    return <div className="notification is-danger">{barcodeError}</div>;
-  }
-
-  // return HTML <table>
-  return (
-    <table className="table-custom">
-      {hasHeaderRow && (
-        <thead>
-          <tr>
-            {records[0].map((col, index) => (
-              <th key={index}>{col}</th>
-            ))}
-          </tr>
-        </thead>
-      )}
-      <tbody>
-        {records.map((row, rowIndex) => {
-          if (hasHeaderRow && rowIndex === 0) return null;
-          const barcodeIndex = hasHeaderRow ? rowIndex - 1 : rowIndex;
-
-          return (
-            <tr key={rowIndex}>
-              {row.map((column, columnIndex) => (
-                <td
-                  key={columnIndex}
-                  style={{ padding: barcodeMargin }}
-                  className="data is-family-monospace"
-                >
-                  {column}
-                </td>
-              ))}
-              {
-                <td className="barcode" style={{ padding: barcodeMargin }}>
-                  <img
-                    src={barcodes[barcodeIndex]}
-                    alt={`Barcode for row ${rowIndex + 1}`}
-                    width={barcodeWidth}
-                    height={barcodeWidth}
-                  />
-                </td>
-              }
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-};
-
+  rows,
+  header,
+  barcodes,
+  barcodeWidth,
+  barcodeMargin,
+  onImageLoad,
+  onImageError,
+}) => (
+  <table className="table-custom">
+    {header && (
+      <thead>
+        <tr>
+          {header.cells.map((cell, index) => (
+            <th scope="col" key={index}>
+              {cell}
+            </th>
+          ))}
+          <th scope="col">Barcode</th>
+        </tr>
+      </thead>
+    )}
+    <tbody>
+      {rows.map((row, index) => (
+        <tr key={row.line}>
+          {row.cells.map((cell, column) => (
+            <td
+              key={column}
+              className="data is-family-monospace"
+              style={{ padding: `${barcodeMargin}mm` }}
+            >
+              {cell}
+            </td>
+          ))}
+          <td className="barcode" style={{ padding: `${barcodeMargin}mm` }}>
+            <BarcodeImage
+              src={barcodes[index]}
+              line={row.line}
+              width={barcodeWidth}
+              onLoad={() => onImageLoad(index)}
+              onError={onImageError}
+            />
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
 export default OutputTable;
