@@ -1,27 +1,27 @@
 /* Bundle only the weights used by the interface to keep the font payload small. */
 @font-face {
-  font-family: "Roboto";
+  font-family: "Geist Sans";
   font-style: normal;
   font-display: swap;
   font-weight: 400;
-  src: url("@fontsource/roboto/files/roboto-latin-400-normal.woff2")
+  src: url("@fontsource/geist-sans/files/geist-sans-latin-400-normal.woff2")
     format("woff2");
 }
 
 @font-face {
-  font-family: "Roboto";
+  font-family: "Geist Sans";
   font-style: normal;
   font-display: swap;
   font-weight: 500;
-  src: url("@fontsource/roboto/files/roboto-latin-500-normal.woff2")
+  src: url("@fontsource/geist-sans/files/geist-sans-latin-500-normal.woff2")
     format("woff2");
 }
 
 @font-face {
-  font-family: "Roboto Mono";
+  font-family: "Geist Mono";
   font-style: normal;
   font-display: swap;
   font-weight: 400;
-  src: url("@fontsource/roboto-mono/files/roboto-mono-latin-400-normal.woff2")
+  src: url("@fontsource/geist-mono/files/geist-mono-latin-400-normal.woff2")
     format("woff2");
 }
