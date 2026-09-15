@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "table-barcode-generator",
+  "compatibility_date": "2026-09-15",
+  "observability": {
+    "enabled": true,
+  },
+  "assets": {
+    "not_found_handling": "single-page-application",
+  },
+}
