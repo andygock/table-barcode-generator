@@ -60,7 +60,7 @@ const App = () => {
               invalid={result.errors.length > 0}
             />
           </div>
-          <div className="column">
+          <div className="column options-panel">
             <h2>Options</h2>
             <label className="checkbox">
               <input

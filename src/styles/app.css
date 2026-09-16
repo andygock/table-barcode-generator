@@ -2,6 +2,12 @@
 @import "./tokens.css";
 @import "./framework-compat.css";
 
+/* Override the shared medium label weight for all controls in the options panel. */
+.options-panel label,
+.options-panel legend {
+  font-weight: 400;
+}
+
 .table-custom {
   border-collapse: collapse;
   border-spacing: 0;
